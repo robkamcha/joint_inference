@@ -3,12 +3,12 @@ Cool name pending...
 
 ## Requirements
 
-[This bilby fork](https://github.com/robkamcha/bilby.git)\
-[tBilby](https://github.com/tBilby/tBilby.git)
+[This bilby fork](https://github.com/robkamcha/joint_inference)\
+[tBilby](https://github.com/tBilby/tBilby)
 
 Clone the repos into your project folder with
 ```
-git clone https://github.com/robkamcha/bilby.git
+git clone --branch transdim-src https://github.com/robkamcha/bilby.git
 git clone https://github.com/tBilby/tBilby.git
 ```
 
