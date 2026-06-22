@@ -1,0 +1,9 @@
+[project]
+name = "joint-inference"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "lalsuite>=7.26.15",
+]
