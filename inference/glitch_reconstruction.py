@@ -11,32 +11,34 @@ from tbilby.core.prior.order_stats import TransdimensionalConditionalDescendingO
 from bilby.gw.transdimensional_source_models import make_glitch_signal_model
 from bilby.gw.likelihood import GlitchGravitationalWaveTransient
 
+STRAIN_FILE = 'H1_SL1.gwf'
 
 logger = bilby.core.utils.logger
 outdir = "glitch_reconstruction"
 label = "GL1"
 sampling_frequency = 2048.0
-trigger_time = 300.0  # Arbitrary
+trigger_time = 100.0  # Arbitrary
 maximum_frequency = 1024
 minimum_frequency = 20
 roll_off = 0.4
-duration = 16
+duration = 8
 post_trigger_duration = 2
-end_time = trigger_time + post_trigger_duration
-start_time = end_time - duration
+# end_time = trigger_time + post_trigger_duration
+start_time = trigger_time
+end_time = start_time + duration
 
 N = 8  # Max number of sine-Gaussian glitch components
 
 # ── Data loading ───────────────────────────────────────────────────────────────
 ifo_h1 = bilby.gw.detector.get_empty_interferometer('H1')
 # TODO: replace with actual frame file once available:
-# ifo_h1.set_strain_data_from_frame_file(
-#     frame_file='path/to/H1.gwf',
-#     sampling_frequency=sampling_frequency,
-#     duration=duration,
-#     start_time=start_time,
-#     channel='H1:GDS-CALIB_STRAIN',
-# )
+ifo_h1.set_strain_data_from_frame_file(
+    frame_file=STRAIN_FILE,
+    sampling_frequency=sampling_frequency,
+    duration=duration,
+    start_time=start_time,
+    channel='H1:STRAIN',
+)
 ifo_h1.set_strain_data_from_power_spectral_density(
     sampling_frequency=sampling_frequency, duration=duration, start_time=start_time
 )
@@ -138,16 +140,17 @@ priors['ra']  = bilby.core.prior.DeltaFunction(peak=0.0, name='ra')
 priors['dec'] = bilby.core.prior.DeltaFunction(peak=0.0, name='dec')
 priors['psi'] = bilby.core.prior.DeltaFunction(peak=0.0, name='psi')
 
+
 # ── Sampling ───────────────────────────────────────────────────────────────────
 result = bilby.core.sampler.run_sampler(
     likelihood,
     priors,
     sampler="dynesty",
     sample="rwalk",
-    nlive=2000,
+    nlive=1000,
     nact=80,
     outdir=outdir,
     label=label,
     resume=True,
-    npool=16,
+    npool=32,
 )
