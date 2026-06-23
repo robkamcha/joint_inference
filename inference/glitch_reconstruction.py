@@ -124,7 +124,7 @@ priors = tbilby.core.base.create_transdimensional_priors(
 priors['H1_n'] = tbilby.core.prior.DiscreteUniform(1, N, 'H1_n_dimension')
 
 for i in range(N):
-    priors[f'H1_dt{i}']  = bilby.core.prior.Uniform(-0.5, 3.0, name=f'H1_dt{i}')
+    priors[f'H1_dt{i}']  = bilby.core.prior.Uniform(0.0, duration, name=f'H1_dt{i}')
     priors[f'H1_f{i}']   = bilby.core.prior.Uniform(
         minimum_frequency, maximum_frequency / 2, name=f'H1_f{i}')
     priors[f'H1_Q{i}']   = bilby.core.prior.Uniform(0.1, 40, name=f'H1_Q{i}')
