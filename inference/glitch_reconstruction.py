@@ -31,7 +31,6 @@ N = 8  # Max number of sine-Gaussian glitch components
 
 # ── Data loading ───────────────────────────────────────────────────────────────
 ifo_h1 = bilby.gw.detector.get_empty_interferometer('H1')
-# TODO: replace with actual frame file once available:
 ifo_h1.set_strain_data_from_frame_file(
     frame_file=STRAIN_FILE,
     sampling_frequency=sampling_frequency,
@@ -39,9 +38,9 @@ ifo_h1.set_strain_data_from_frame_file(
     start_time=start_time,
     channel='H1:STRAIN',
 )
-ifo_h1.set_strain_data_from_power_spectral_density(
-    sampling_frequency=sampling_frequency, duration=duration, start_time=start_time
-)
+# The default H1 PSD (set by get_empty_interferometer) is used for the
+# likelihood inner product; do NOT call set_strain_data_from_power_spectral_density
+# here — that would overwrite the loaded frame data with synthetic Gaussian noise.
 ifo_list = bilby.gw.detector.InterferometerList([ifo_h1])
 
 # ── Waveform generators ────────────────────────────────────────────────────────
@@ -125,7 +124,7 @@ priors = tbilby.core.base.create_transdimensional_priors(
 priors['H1_n'] = tbilby.core.prior.DiscreteUniform(1, N, 'H1_n_dimension')
 
 for i in range(N):
-    priors[f'H1_dt{i}']  = bilby.core.prior.Uniform(-0.3, 0.2, name=f'H1_dt{i}')
+    priors[f'H1_dt{i}']  = bilby.core.prior.Uniform(-0.5, 3.0, name=f'H1_dt{i}')
     priors[f'H1_f{i}']   = bilby.core.prior.Uniform(
         minimum_frequency, maximum_frequency / 2, name=f'H1_f{i}')
     priors[f'H1_Q{i}']   = bilby.core.prior.Uniform(0.1, 40, name=f'H1_Q{i}')
