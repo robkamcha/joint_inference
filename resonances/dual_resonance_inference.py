@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import copy
 
 from bilby.gw.source import lal_binary_neutron_star
 from bilby.gw.transdimensional_source_models import bns_with_resonances_factory
@@ -8,6 +9,7 @@ import bilby
 
 from tbilby.core.prior.order_stats import TransdimensionalConditionalAscendingOrderStatPrior
 import tbilby
+
 
 logger = bilby.core.utils.logger
 outdir = "NS_resonance_transdimensional"
@@ -41,7 +43,7 @@ parameter_dict = {
     'tilt_2': 0.0,
     'phi_12': 0.0,
     'phi_jl': 0.0,
-    'luminosity_distance': 400,  # Mpc
+    'luminosity_distance': 40,  # Mpc
     'theta_jn': np.pi / 3.0,
     'phase': 0.0,
     'ra': 0.0,
@@ -91,6 +93,21 @@ ifo_list.inject_signal(
     parameters=parameter_dict,
     earth_rotation=True
 )
+
+def get_network_snr(ifos, wf_gen, parameters):
+    ifos = copy.deepcopy(ifos) # Don't modify the original ifos
+    network_snr = 0.0
+    injection_polarisations = wf_gen.frequency_domain_strain(parameters)
+
+    for ifo in ifos:
+        ifo_polarisations = ifo.get_detector_response(injection_polarisations, parameters, earth_rotation=True)
+        ifo_snr_squared = ifo.optimal_snr_squared(ifo_polarisations)
+        network_snr += ifo_snr_squared
+
+    return np.sqrt(network_snr)
+
+network_snr = get_network_snr(ifo_list, waveform_generator, parameter_dict)
+print(f"Network SNR: {network_snr:.2f}")
 
 
 # ── Likelihood ─────────────────────────────────────────────────────────────────
