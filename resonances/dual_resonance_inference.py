@@ -74,7 +74,7 @@ waveform_generator = bilby.gw.waveform_generator.WaveformGenerator(
     duration=duration,
     sampling_frequency=sampling_frequency,
     frequency_domain_source_model=bns_with_resonances,
-    parameter_conversion=bilby.gw.conversion.convert_to_lal_binary_black_hole_parameters,
+    parameter_conversion=bilby.gw.conversion.convert_to_lal_binary_neutron_star_parameters,
     waveform_arguments=waveform_arguments,
 )
 
@@ -186,6 +186,8 @@ priors['phase'] = bilby.core.prior.Uniform(
     0, 2 * np.pi, name='phase', boundary='periodic')
 priors['a_1'] = bilby.core.prior.Uniform(0, 0.05, name='a_1') # NSs are expected to have low spins, so we restrict the prior to a small range
 priors['a_2'] = bilby.core.prior.Uniform(0, 0.05, name='a_2')
+priors['lambda_1'] = bilby.core.prior.Uniform(0, 2000, name='lambda_1')
+priors['lambda_2'] = bilby.core.prior.Uniform(0, 2000, name='lambda_2')
 
 
 # ── Sampling ───────────────────────────────────────────────────────────────────
